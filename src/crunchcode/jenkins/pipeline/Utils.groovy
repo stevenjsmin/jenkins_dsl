@@ -1,4 +1,4 @@
-package com.nab.api.pipeline;
+package crunchcode.jenkins.pipeline;
 
 import groovy.json.JsonSlurper
 import java.text.*
