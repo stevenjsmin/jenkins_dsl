@@ -7,13 +7,12 @@ class Utils {
 
     //def responseText = ""
 
-    static def get_git_branches(gitURL) {
+    static def getGitBranches(gitURL) {
 
         def command = "git ls-remote --heads ${gitURL}"
 
         def branches = []
-        // DEBUG : Test
-        // File debug_file = new File("/tmp/get_git_branches_debug.txt")
+        // File debug_file = new File("/tmp/getGitBranches.txt")
         // debug_file << "DEBUG 0: ${command}\n"
 
         try {
@@ -69,9 +68,9 @@ class Utils {
     }
 
     static
-    def get_artifact_attributes(String server_url, String dirPath, String artifactPath, String repo, String username, String password, String propertyName) {
+    def getArtifactAttributes(String server_url, String dirPath, String artifactPath, String repo, String username, String password, String propertyName) {
         //common function to connect to Enterprise Artifactory and call Artifactory REST API to get artifact attributes
-        //File debug_file = new File("/data/jenkins_home/jobs/Retrieve_Pipeline_Libraries/workspace/get_artifact_attributes.txt")
+        //File debug_file = new File("/data/jenkins_home/jobs/Retrieve_Pipeline_Libraries/workspace/getArtifactAttributes.txt")
 
         //debug_file << "DEBUG: dirPath=${dirPath}\n"
         //debug_file << "DEBUG: artifactPath=${artifactPath}\n"
@@ -141,9 +140,9 @@ class Utils {
         return "noPropertyFound"
     }
 
-    static def get_artifacts_data(String server_url, String dir_path, String repo, String username, String password) {
+    static def getArtifactsData(String server_url, String dir_path, String repo, String username, String password) {
         //common function to connect to Enterprise Artifactory and call Artifactory REST API to get data
-        // File debug_file = new File("/tmp/get_artifacts_data.txt")
+        // File debug_file = new File("/tmp/getArtifactsData.txt")
 
         def address = server_url + "/api/search/gavc?g=" + dir_path + "&repos=" + repo
         def HTTP_MAX_ATTEMPTS = 10
@@ -175,16 +174,16 @@ class Utils {
         }
     }
 
-    static def get_artifact_names(String server_url, String dir_path, String repo, String username, String password) {
+    static def getArtifactNames(String server_url, String dir_path, String repo, String username, String password) {
         // DEBUG
-        File debug_file = new File("/tmp/get_artifact_names.txt")
+        File debug_file = new File("/tmp/getArtifactNames.txt")
 
         def removeString = server_url + "/api/storage/" + repo + "/"
         def result = []
         def newresult = []
 
         //call common function to connect to Enterprise Artifactory and call Artifactory REST API to get data
-        //def responseText = get_artifacts_data(server_url, dir_path, repo, username, password)
+        //def responseText = getArtifactsData(server_url, dir_path, repo, username, password)
 
         def address = server_url + "/api/search/gavc?g=" + dir_path + "&repos=" + repo
         def HTTP_MAX_ATTEMPTS = 10
@@ -272,7 +271,7 @@ class Utils {
     // see this issue https://issues.jenkins-ci.org/browse/JENKINS-44924
     @NonCPS
     static
-    def get_esg_amis(String searchParameter, String awsAccount, String branch, String amiFilePath, String serverRole) {
+    def getEsgAmis(String searchParameter, String awsAccount, String branch, String amiFilePath, String serverRole) {
 
         def result = []
         def error = []
@@ -281,7 +280,7 @@ class Utils {
         def server_Role = ""
 
         // DEBUG
-        // File debug_file = new File("/tmp/get_esg_amis.txt")
+        // File debug_file = new File("/tmp/getEsgAmis.txt")
         // debug_file << "DEBUG: searchParameter=${searchParameter}\n"
         // debug_file << "DEBUG: awsAccount=${awsAccount}\n"
         // debug_file << "DEBUG: branch=${branch}\n"
@@ -372,9 +371,9 @@ class Utils {
 
     @NonCPS
     static
-    def get_artifact_names_filtered_sorted(String server_url, String dir_path, String branch, String repoName, String username, String password) {
+    def getArtifactNamesFilteredSorted(String server_url, String dir_path, String branch, String repoName, String username, String password) {
         // DEBUG
-        File debug_file = new File("/data/jenkins_home/jobs/Retrieve_Pipeline_Libraries/workspace/get_artifact_names_filtered_sorted.txt")
+        File debug_file = new File("/data/jenkins_home/jobs/Retrieve_Pipeline_Libraries/workspace/getArtifactNamesFilteredSorted.txt")
 
         def removeString = server_url + "/api/storage/" + repoName + "/"
         def result = []
