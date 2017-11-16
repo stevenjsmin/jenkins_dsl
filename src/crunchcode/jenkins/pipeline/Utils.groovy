@@ -3,9 +3,6 @@ package crunchcode.jenkins.pipeline;
 import groovy.json.JsonSlurper
 import java.text.*
 
-/**
- * Git Utils
- */
 class Utils {
 
     //def responseText = ""
