@@ -12,7 +12,7 @@ class Utils {
         def command = "git ls-remote --heads ${gitURL}"
 
         def branches = []
-        // DEBUG
+        // DEBUG : Test
         // File debug_file = new File("/tmp/get_git_branches_debug.txt")
         // debug_file << "DEBUG 0: ${command}\n"
 
