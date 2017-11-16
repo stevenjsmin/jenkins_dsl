@@ -19,7 +19,7 @@ class Utils {
         try {
             def proc = command.execute()
             proc.waitFor()
-            for(int i=0; proc.exitValue() != 0; i++) {
+            for (int i = 0; proc.exitValue() != 0; i++) {
                 // debug_file << "Error:: Inside Far loop, ${proc.err.text} and iteration # ${i}\n"
                 sleep(3000);
                 proc = command.execute()
@@ -38,25 +38,24 @@ class Utils {
             //    it.replaceAll(/[a-z0-9]*\trefs\/heads\//, '')
             //}
 
-            branches = branches.indexOf( "develop" ).with { idx ->
-                if( idx > -1  && branches[idx].length()==7) {
-                    new ArrayList( branches ).with { a ->
-                        a.remove( idx )
-                            a
+            branches = branches.indexOf("develop").with { idx ->
+                if (idx > -1 && branches[idx].length() == 7) {
+                    new ArrayList(branches).with { a ->
+                        a.remove(idx)
+                        a
                     }
-                }
-                else branches
+                } else branches
             }
             // debug_file << "DEBUG 2: branches: ${branches}\n"
 
-            branches.add(0,"develop")
+            branches.add(0, "develop")
             // debug_file << "DEBUG 3: branches: ${branches}\n"
             return branches
         } catch (Exception ex) {
             // Note that print statements will not work in Jenkins
             // scripted pipeline
             println "Exception:\n"
-            println (ex.toString())
+            println(ex.toString())
             // debug_file << "Exception::\n"
             //     debug_file << (ex.toString())
             //     debug_file << "\n"
@@ -69,7 +68,8 @@ class Utils {
 
     }
 
-    static def get_artifact_attributes(String server_url, String dirPath, String artifactPath, String repo, String username, String password, String propertyName) {
+    static
+    def get_artifact_attributes(String server_url, String dirPath, String artifactPath, String repo, String username, String password, String propertyName) {
         //common function to connect to Enterprise Artifactory and call Artifactory REST API to get artifact attributes
         //File debug_file = new File("/data/jenkins_home/jobs/Retrieve_Pipeline_Libraries/workspace/get_artifact_attributes.txt")
 
@@ -79,13 +79,13 @@ class Utils {
         def artifactPathTokenized = artifactPath.split('/')
         //debug_file << "DEBUG: artifactPathTokenized=${artifactPathTokenized}\n"
         def artifactFullPath = artifactPath + "/" + artifactPathTokenized[1] + "-" + artifactPathTokenized[2] + ".tar.gz"
-        
+
         //debug_file << "DEBUG: artifactFullPath=${artifactFullPath}\n"
-        
+
         def address = server_url + "/api/storage/" + repo + "/" + artifactFullPath + "?properties=" + propertyName
         def HTTP_MAX_ATTEMPTS = 10
-        def HTTP_SLEEP_TIME   = 60000 // time is in milliseconds, 60 seconds.
-        def HTTP_TIMEOUT      = 7000 // time is in milliseconds, 7 seconds.
+        def HTTP_SLEEP_TIME = 60000 // time is in milliseconds, 60 seconds.
+        def HTTP_TIMEOUT = 7000 // time is in milliseconds, 7 seconds.
 
         def responseText = ""
         def authString = "${username}:${password}".getBytes().encodeBase64().toString()
@@ -101,44 +101,42 @@ class Utils {
             def conn = address.toURL().openConnection()
             conn.setConnectTimeout(HTTP_TIMEOUT)
             conn.setReadTimeout(HTTP_TIMEOUT)
-            conn.setRequestProperty( "Authorization", "Basic ${authString}" )
+            conn.setRequestProperty("Authorization", "Basic ${authString}")
             responseText = conn.content.text
             //debug_file << "DEBUG: responseText=${responseText}\n"
             //return responseText
 
-        } catch ( java.net.SocketTimeoutException ex ) {
-          //println "http timeout. sleeping until next http attempt"
+        } catch (java.net.SocketTimeoutException ex) {
+            //println "http timeout. sleeping until next http attempt"
             sleep HTTP_SLEEP_TIME
         }
-        
-        def tempResult =  new JsonSlurper().parseText( responseText )
+
+        def tempResult = new JsonSlurper().parseText(responseText)
         def value
-        def propertyFound=false
+        def propertyFound = false
         //debug_file << "DEBUG: tempResult=${tempResult}\n"
-        if( tempResult.properties )
-        {
+        if (tempResult.properties) {
             //debug_file << "DEBUG: tempResult.hasProperty(properties)\n\n"
-            tempResult.properties.each { child -> 
+            tempResult.properties.each { child ->
                 //debug_file << "DEBUG: child: ${child}\n"
                 String childStr = child.toString()
                 String propertyNameStr = propertyName.toString()
-                int match=childStr.indexOf(propertyNameStr)
+                int match = childStr.indexOf(propertyNameStr)
                 //debug_file << "childStr.indexof(propertyNameStr)=${match}\n"
                 //if( match > -1 )
-                if( childStr.indexOf(propertyNameStr) > -1 )
-                {
+                if (childStr.indexOf(propertyNameStr) > -1) {
                     //debug_file << "DEBUG: child.${propertyName} present\n"
                     value = childStr.split('=')[1]
-                    value = value.replace("[","")
-                    value = value.replace("]","")
-                    value = value.replace(" ","")
+                    value = value.replace("[", "")
+                    value = value.replace("]", "")
+                    value = value.replace(" ", "")
                     //debug_file << "DEBUG: child.${propertyName}: ${value}\n"
-                    propertyFound=true
+                    propertyFound = true
                     //return value  //doesnt work?
                 }
             }
         }
-        if( propertyFound )
+        if (propertyFound)
             return value
         return "noPropertyFound"
     }
@@ -149,8 +147,8 @@ class Utils {
 
         def address = server_url + "/api/search/gavc?g=" + dir_path + "&repos=" + repo
         def HTTP_MAX_ATTEMPTS = 10
-        def HTTP_SLEEP_TIME   = 60000 // time is in milliseconds, 60 seconds.
-        def HTTP_TIMEOUT      = 7000 // time is in milliseconds, 7 seconds.
+        def HTTP_SLEEP_TIME = 60000 // time is in milliseconds, 60 seconds.
+        def HTTP_TIMEOUT = 7000 // time is in milliseconds, 7 seconds.
 
         def responseText = ""
         def authString = "${username}:${password}".getBytes().encodeBase64().toString()
@@ -166,13 +164,13 @@ class Utils {
             def conn = address.toURL().openConnection()
             conn.setConnectTimeout(HTTP_TIMEOUT)
             conn.setReadTimeout(HTTP_TIMEOUT)
-            conn.setRequestProperty( "Authorization", "Basic ${authString}" )
+            conn.setRequestProperty("Authorization", "Basic ${authString}")
             responseText = conn.content.text
             // debug_file << "DEBUG: responseText=${responseText}\n"
             //return responseText
 
-        } catch ( java.net.SocketTimeoutException ex ) {
-          //println "http timeout. sleeping until next http attempt"
+        } catch (java.net.SocketTimeoutException ex) {
+            //println "http timeout. sleeping until next http attempt"
             sleep HTTP_SLEEP_TIME
         }
     }
@@ -187,11 +185,11 @@ class Utils {
 
         //call common function to connect to Enterprise Artifactory and call Artifactory REST API to get data
         //def responseText = get_artifacts_data(server_url, dir_path, repo, username, password)
-    
+
         def address = server_url + "/api/search/gavc?g=" + dir_path + "&repos=" + repo
         def HTTP_MAX_ATTEMPTS = 10
-        def HTTP_SLEEP_TIME   = 60000 // time is in milliseconds, 60 seconds.
-        def HTTP_TIMEOUT      = 7000 // time is in milliseconds, 7 seconds.
+        def HTTP_SLEEP_TIME = 60000 // time is in milliseconds, 60 seconds.
+        def HTTP_TIMEOUT = 7000 // time is in milliseconds, 7 seconds.
 
         def responseText = ""
         def authString = "${username}:${password}".getBytes().encodeBase64().toString()
@@ -207,16 +205,16 @@ class Utils {
             def conn = address.toURL().openConnection()
             conn.setConnectTimeout(HTTP_TIMEOUT)
             conn.setReadTimeout(HTTP_TIMEOUT)
-            conn.setRequestProperty( "Authorization", "Basic ${authString}" )
+            conn.setRequestProperty("Authorization", "Basic ${authString}")
             responseText = conn.content.text
             debug_file << "DEBUG: responseText=${responseText}\n"
 
-        } catch ( java.net.SocketTimeoutException ex ) {
-          //println "http timeout. sleeping until next http attempt"
+        } catch (java.net.SocketTimeoutException ex) {
+            //println "http timeout. sleeping until next http attempt"
             sleep HTTP_SLEEP_TIME
         }
-    
-        def tempResult =  new JsonSlurper().parseText( responseText )
+
+        def tempResult = new JsonSlurper().parseText(responseText)
         debug_file << "DEBUG: tempResult=${tempResult}\n"
 
         tempResult.results.each { child ->
@@ -230,7 +228,7 @@ class Utils {
         def tempList = []
         def key = ""
         result.each { child ->
-                       tempList = child.tokenize('/')
+            tempList = child.tokenize('/')
             key = tempList[0] + "/" + tempList[1]
 
             if (tempList[0].contains("filters")) {
@@ -242,7 +240,7 @@ class Utils {
             }
             value = value.isInteger() ? value.toInteger() : value
 
-            if(resultMap.containsKey(key)) {
+            if (resultMap.containsKey(key)) {
                 resultMap[key].add(value)
             } else {
                 resultMap[key] = [value]
@@ -273,7 +271,8 @@ class Utils {
     // Need to use @NonCPS due to the issue with using sort method with custom comparators
     // see this issue https://issues.jenkins-ci.org/browse/JENKINS-44924
     @NonCPS
-    static def get_esg_amis(String searchParameter, String awsAccount, String branch, String amiFilePath, String serverRole) {
+    static
+    def get_esg_amis(String searchParameter, String awsAccount, String branch, String amiFilePath, String serverRole) {
 
         def result = []
         def error = []
@@ -302,15 +301,15 @@ class Utils {
             try {
                 searchParam = searchParameter
             } catch (MissingPropertyExceptionmpe) {
-                return [ 'searchParameter undefined' ]
+                return ['searchParameter undefined']
             }
 
             try {
                 server_Role = serverRole
-                if ( server_Role != '' )
+                if (server_Role != '')
                     searchParam = searchParam + '-' + server_Role
             } catch (MissingPropertyExceptionmpe) {
-                server_Role=''
+                server_Role = ''
             }
 
             try {
@@ -321,39 +320,38 @@ class Utils {
 
             searchParam = searchParam.toLowerCase()
 
-            def fileContents = new File(ami_file_path + awsAccount+'_amis.json').text
+            def fileContents = new File(ami_file_path + awsAccount + '_amis.json').text
 
             def tags = ["BaseAMI", "CommonAMI", "Branch", "Version"]
             def entry = ""
-            def tempResult =  new JsonSlurper().parseText( fileContents )
+            def tempResult = new JsonSlurper().parseText(fileContents)
             // debug_file << "DEBUG: tempResult=${tempResult}\n"
-            tempResult = (tempResult.Images).sort { a,b -> b.CreationDate <=> a.CreationDate }
+            tempResult = (tempResult.Images).sort { a, b -> b.CreationDate <=> a.CreationDate }
             // debug_file << "DEBUG: tempResult.sort=${tempResult}\n"
             tempResult.each { child ->
-                if( child && child.Name && (child.Name.toLowerCase()).startsWith(searchParam) ) {
+                if (child && child.Name && (child.Name.toLowerCase()).startsWith(searchParam)) {
                     entry = child.ImageId
                     entry = entry + " " + (child.Name).take(15) + ".."
-                    entry = entry + "|" + (child.CreationDate).take((child.CreationDate.length())-5)
-                    if ( child.Tags ) {
+                    entry = entry + "|" + (child.CreationDate).take((child.CreationDate.length()) - 5)
+                    if (child.Tags) {
                         def childTags = child.Tags.sort { it.Key }
                         childTags.each { innerchild ->
                             tags.each { tag ->
-                                if( innerchild.Key == tag )
-                                {
-                                    if( innerchild.Value != "" )
-                                        entry = entry + "|"+tag+": " + innerchild.Value
+                                if (innerchild.Key == tag) {
+                                    if (innerchild.Value != "")
+                                        entry = entry + "|" + tag + ": " + innerchild.Value
                                 }
                             }
                         }
                     }
-                    if( branchType.equals("all") )
+                    if (branchType.equals("all"))
                         result.add(entry)
-                    else if ( !branchType.equals("all") && entry.contains(branchType) )
+                    else if (!branchType.equals("all") && entry.contains(branchType))
                         result.add(entry)
                 }
             }
 
-            if ( !result || result.empty ) {
+            if (!result || result.empty) {
                 error.add("No matching AMIs found?")
                 error.add("AMISearchPattern: " + searchParam)
                 error.add("AMIInfraBuildSearchPattern: " + branchType)
@@ -371,24 +369,25 @@ class Utils {
             return error
         }
     }
-    
+
     @NonCPS
-    static def get_artifact_names_filtered_sorted(String server_url, String dir_path, String branch, String repoName, String username, String password) {
+    static
+    def get_artifact_names_filtered_sorted(String server_url, String dir_path, String branch, String repoName, String username, String password) {
         // DEBUG
         File debug_file = new File("/data/jenkins_home/jobs/Retrieve_Pipeline_Libraries/workspace/get_artifact_names_filtered_sorted.txt")
-  
+
         def removeString = server_url + "/api/storage/" + repoName + "/"
         def result = []
-        def newresult = []  
-        
+        def newresult = []
+
         debug_file << "DEBUG: before calling get_artifacts_data"
         //call common function to connect to Enterprise Artifactory and call Artifactory REST API to get data
         //def responseText = get_artifacts_data(server_url, dir_path, repoName, username, password)
 
         def address = server_url + "/api/search/gavc?g=" + dir_path + "&repos=" + repoName
         def HTTP_MAX_ATTEMPTS = 10
-        def HTTP_SLEEP_TIME   = 60000 // time is in milliseconds, 60 seconds.
-        def HTTP_TIMEOUT      = 7000 // time is in milliseconds, 7 seconds.
+        def HTTP_SLEEP_TIME = 60000 // time is in milliseconds, 60 seconds.
+        def HTTP_TIMEOUT = 7000 // time is in milliseconds, 7 seconds.
 
         def responseText = ""
         def authString = "${username}:${password}".getBytes().encodeBase64().toString()
@@ -404,28 +403,28 @@ class Utils {
             def conn = address.toURL().openConnection()
             conn.setConnectTimeout(HTTP_TIMEOUT)
             conn.setReadTimeout(HTTP_TIMEOUT)
-            conn.setRequestProperty( "Authorization", "Basic ${authString}" )
+            conn.setRequestProperty("Authorization", "Basic ${authString}")
             responseText = conn.content.text
             // debug_file << "DEBUG: responseText=${responseText}\n"
             //return responseText
 
-        } catch ( java.net.SocketTimeoutException ex ) {
-          //println "http timeout. sleeping until next http attempt"
+        } catch (java.net.SocketTimeoutException ex) {
+            //println "http timeout. sleeping until next http attempt"
             sleep HTTP_SLEEP_TIME
         }
-        
-        def tempResult =  new JsonSlurper().parseText( responseText )
+
+        def tempResult = new JsonSlurper().parseText(responseText)
         debug_file << "DEBUG: tempResult=${tempResult}\n"
 
-      
+
         tempResult.results.each { child ->
-            removeString = "https://artifactory.aus.thenational.com/api/storage/" + repoName + "/"      
+            removeString = "https://artifactory.aus.thenational.com/api/storage/" + repoName + "/"
             result.add(child.uri - removeString)
         }
         // debug_file << "DEBUG: result=${result}\n"
-        
+
         TreeMap resultMap = [:]
-      
+
         def value = ""
         def tempList = []
         def key = ""
@@ -436,28 +435,25 @@ class Utils {
         result.each { child ->
             tempList = child.split('/')
 
-            buildNumber = Integer.parseInt(tempList[tempList.length-2])
+            buildNumber = Integer.parseInt(tempList[tempList.length - 2])
 
-            artifact = child - ('/' + tempList[tempList.length-1])
+            artifact = child - ('/' + tempList[tempList.length - 1])
 
-          	if( artifact.tokenize('/')[1] == branch)
-          	{
-              if(!resultMap.containsKey(buildNumber)) {
-                      resultMap[buildNumber] = artifact
-              }
-              else
-              {
-                return "error: key '" + key + "' corresponds with 2 values '" + resultMap[buildNumber] + ", "+artifact+"'" 
-              }
+            if (artifact.tokenize('/')[1] == branch) {
+                if (!resultMap.containsKey(buildNumber)) {
+                    resultMap[buildNumber] = artifact
+                } else {
+                    return "error: key '" + key + "' corresponds with 2 values '" + resultMap[buildNumber] + ", " + artifact + "'"
+                }
             }
         }
-      
-      	resultMap = resultMap.sort { it.key }
-      
+
+        resultMap = resultMap.sort { it.key }
+
         resultMap.each { k, v ->
-           newresult.add("" + v + "") //cast int to string?
-        } 
-    
+            newresult.add("" + v + "") //cast int to string?
+        }
+
         //return newresult[0]
         return newresult.reverse()
 
