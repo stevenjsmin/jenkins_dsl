@@ -62,5 +62,6 @@ EOF_ASSUME_ROLE
                 update_ami_list_job = "Update_AMIs_SC_Accounts"
         }
         build job: update_ami_list_job
+        # Test
     }
 }
